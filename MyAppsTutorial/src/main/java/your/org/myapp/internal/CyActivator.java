@@ -10,6 +10,8 @@ import org.osgi.framework.BundleContext;
 import org.cytoscape.work.ServiceProperties;
 import org.cytoscape.work.TaskFactory;
 import org.cytoscape.session.CyNetworkNaming;
+import org.cytoscape.view.model.CyNetworkViewFactory;
+import org.cytoscape.view.model.CyNetworkViewManager;
 
 
 public class CyActivator extends AbstractCyActivator {
@@ -28,9 +30,11 @@ public class CyActivator extends AbstractCyActivator {
 		CyNetworkManager cyNetworkManagerServiceRef = getService(context,CyNetworkManager.class);
 		CyNetworkNaming cyNetworkNamingServiceRef = getService(context,CyNetworkNaming.class);
 		CyNetworkFactory cyNetworkFactoryServiceRef = getService(context,CyNetworkFactory.class);
+		CyNetworkViewFactory cyNetworkViewFactoryServiceRef = getService(context,CyNetworkViewFactory.class);
+		CyNetworkViewManager cyNetworkViewManagerServiceRef = getService(context,CyNetworkViewManager.class);
 		
 		HelloWorldTaskFactory helloWorldTaskFactory  = new HelloWorldTaskFactory(cyNetworkManagerServiceRef,
-		cyNetworkNamingServiceRef, cyNetworkFactoryServiceRef);
+		cyNetworkNamingServiceRef, cyNetworkFactoryServiceRef,cyNetworkViewFactoryServiceRef,cyNetworkViewManagerServiceRef);
 
 
 		 // Set menu properties

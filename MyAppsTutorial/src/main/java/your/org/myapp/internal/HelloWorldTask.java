@@ -1,6 +1,7 @@
 package your.org.myapp.internal;
 
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.List;
 
 import org.cytoscape.model.CyNetwork;
@@ -12,6 +13,9 @@ import org.cytoscape.model.CyTable;
 import org.cytoscape.work.AbstractTask;
 import org.cytoscape.work.TaskMonitor;
 import org.cytoscape.session.CyNetworkNaming;
+import org.cytoscape.view.model.CyNetworkView;
+import org.cytoscape.view.model.CyNetworkViewFactory;
+import org.cytoscape.view.model.CyNetworkViewManager;
 
 public class HelloWorldTask extends AbstractTask {
 
@@ -19,20 +23,27 @@ public class HelloWorldTask extends AbstractTask {
 	private final CyNetworkManager helloworldtaskmanager;
 	private final CyNetworkNaming  nameU;
 	
+	private final CyNetworkViewFactory networkView;
+	private final CyNetworkViewManager networkViewManager;
 	
 	
 		public HelloWorldTask (final CyNetworkManager helloworldtaskmanager, 
 							   final CyNetworkNaming nameU, 
-							   final CyNetworkFactory helloworldtaskfactory) {
-		
-				this.helloworldtaskmanager = helloworldtaskmanager;
-				this.helloworldtaskfactory = helloworldtaskfactory;
-				this.nameU = nameU;
-		}
-		
+							   final CyNetworkFactory helloworldtaskfactory,
+							   final CyNetworkViewFactory networkView,
+                               final CyNetworkViewManager networkViewManager) {
+			
+      this.helloworldtaskmanager = helloworldtaskmanager;
+	    this.nameU = nameU;
+	    this.helloworldtaskfactory = helloworldtaskfactory;
+	    this.networkViewManager=networkViewManager;	
+	    this.networkView=networkView;
+  }
+
 
 	
 		public void run(TaskMonitor monitor) throws Exception {
+			
 			// Create an empty network
 				CyNetwork myNet = helloworldtaskfactory.createNetwork();
 				myNet.getRow(myNet).set(CyNetwork.NAME, nameU.getSuggestedNetworkTitle("Hello World Network"));
@@ -72,6 +83,21 @@ public class HelloWorldTask extends AbstractTask {
 			
 			
 				helloworldtaskmanager.addNetwork(myNet);
+				
+				
+				final Collection<CyNetworkView> views = networkViewManager.getNetworkViews(myNet);
+				
+				CyNetworkView myView = null;
+				if(views.size() != 0)
+					myView = views.iterator().next();
+				
+				if (myView == null) {
+					// create a new view for my network
+					myView = networkView.createNetworkView(myNet);
+					networkViewManager.addNetworkView(myView);
+				} else {
+					System.out.println("networkView already existed.");
+				}
 			
 			// Set the variable destroyNetwork to true, the following code will destroy a network
 				boolean destroyNetwork = false;
